@@ -10,7 +10,7 @@ pipeline {
             steps {
                 script {
                     echo '===========Checking out code================='
-                    git url: 'https://github.com/ilham1239/sonar_test', branch: "master"
+                    git url: 'https://github.com/ilham1239/sonar_test', branch: "main"
                     
                     //force building now 
                     //checkout scm: [$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], userRemoteConfigs: [[url: 'https://github.com/your-repo.git']]]                
@@ -25,43 +25,44 @@ pipeline {
                 //bat 'IF EXIST docker-compose.yml echo FOUND'
                 bat 'docker-compose up -d'
                 echo '=====LOG====exit-code1: %ERRORLEVEL%'
+                echo "it works"
 
             }
         }
-        stage('Scan Containers with Trivy') {
-            steps {
-                script {
-                    echo "==========Scanning the images ======="
+        // stage('Scan Containers with Trivy') {
+        //     steps {
+        //         script {
+        //             echo "==========Scanning the images ======="
                     
-                    // Display Trivy version
-                    bat 'trivy --version'
+        //             // Display Trivy version
+        //             bat 'trivy --version'
                     
-                    // List of services to scan
-                    def services = ['app', 'mysql']
+        //             // List of services to scan
+        //             def services = ['akaunting', 'akaunting-db']
                     
-                    // Loop through services to scan each image
-                    for (service in services) {
-                        // Retrieve the image ID using docker-compose and store it in a variable
-                        def imageId = bat(script: "docker-compose images ${service} -q", returnStdout: true).trim()
-                        def imageId_trimmed = imageId.readLines().last().trim()
+        //             // Loop through services to scan each image
+        //             for (service in services) {
+        //                 // Retrieve the image ID using docker-compose and store it in a variable
+        //                 def imageId = bat(script: "docker-compose images ${service} -q", returnStdout: true).trim()
+        //                 def imageId_trimmed = imageId.readLines().last().trim()
 
-                        if (imageId_trimmed) {
-                            echo "Scanning image for service: ${service} ${imageId_trimmed}"
+        //                 if (imageId_trimmed) {
+        //                     echo "Scanning image for service: ${service} ${imageId_trimmed}"
                             
-                            // this line below works  
-                            // info it trivy is fixing vuln stuff
-                            def scanResult = bat(script: "trivy image --light --severity CRITICAL,HIGH ${imageId_trimmed}", returnStdout: true)
-                            echo "Scan result for ${service}: ${scanResult}"
+        //                     // this line below works  
+        //                     // info it trivy is fixing vuln stuff
+        //                     def scanResult = bat(script: "trivy image --light --severity CRITICAL,HIGH ${imageId_trimmed}", returnStdout: true)
+        //                     echo "Scan result for ${service}: ${scanResult}"
                             
-                            // Run Trivy scan containers and save report on a file for each image
-                            // bat 'trivy -q image --light --severity CRITICAL,HIGH --format json -o "D:\\Desktop\\${service}_scan_report.json" ${imageId_trimmed}'
-                        } else {
-                            echo "No image found for service: ${service}"
-                        }
-                    }
-                }
-            }
-        }
+        //                     // Run Trivy scan containers and save report on a file for each image
+        //                     // bat 'trivy -q image --light --severity CRITICAL,HIGH --format json -o "D:\\Desktop\\${service}_scan_report.json" ${imageId_trimmed}'
+        //                 } else {
+        //                     echo "No image found for service: ${service}"
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
     }
     post {
