@@ -10,7 +10,7 @@ pipeline {
             steps {
                 script {
                     echo '===========Checking out code================='
-                    git url: 'https://github.com/sam99235/learn_jenkins.git', branch: "master"
+                    git url: 'https://github.com/ilham1239/sonar_test', branch: "master"
                     
                     //force building now 
                     //checkout scm: [$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], userRemoteConfigs: [[url: 'https://github.com/your-repo.git']]]                
